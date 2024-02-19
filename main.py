@@ -1,18 +1,33 @@
 # main.py
 
+import threading
 import server
 import client
 import game_logic
 
-def main():
-    # Initialisation du serveur et des clients
-    server.start_server()
-    client1 = client.Client()
-    client2 = client.Client()
+def start_game_server():
+    # Initialize and start the game server
+    hangman_server = server.HangmanServer("127.0.0.1", 5555, "pendu", 6)
+    server_thread = threading.Thread(target=hangman_server.start)
+    server_thread.start()
 
-    # Lancement du jeu
-    game = game_logic.Game()
-    game.start()
+def start_game_client():
+    # Initialize and start a game client
+    hangman_client = client.Client("127.0.0.1", 5555)
+    client_thread = threading.Thread(target=hangman_client.run_client)
+    client_thread.start()
+    return client_thread
+
+def main():
+    # Start the server
+    start_game_server()
+
+    # Start two clients for demonstration
+    clients = [start_game_client() for _ in range(2)]
+
+    # Wait for both clients to finish
+    for c in clients:
+        c.join()
 
 if __name__ == "__main__":
     main()
