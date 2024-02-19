@@ -29,4 +29,22 @@ if __name__ == "__main__":
     word_to_guess = "pendu"
     max_attempts = 6
     game = Game(word_to_guess, max_attempts)
-    # Logique de gestion du jeu
+
+    while not game.is_game_over():
+        print(game.display_word())
+        print(game.display_hangman())
+        guess = input("Devinez une lettre: ").strip().lower()
+        if not guess or len(guess) > 1:
+            print("Veuillez entrer une seule lettre.")
+            continue
+        success = game.guess(guess)
+        if success:
+            print("Bonne lettre!")
+        else:
+            print("Mauvaise lettre.")
+
+    if all(letter in game.guessed_letters for letter in game.word):
+        print("Félicitations! Vous avez trouvé le mot:", game.word)
+    else:
+        print("Dommage! Le mot était:", game.word)
+        print(game.display_hangman())
