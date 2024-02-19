@@ -8,20 +8,22 @@ class Game:
         self.guessed_letters = []
 
     def guess(self, letter):
-        # Logique de vérification de la lettre devinée
-        pass
+        if letter in self.word and letter not in self.guessed_letters:
+            self.guessed_letters.append(letter)
+            return True
+        else:
+            self.attempts += 1
+            return False
 
     def is_game_over(self):
-        # Vérifier si le jeu est terminé (le mot a été deviné ou le nombre maximal de tentatives a été atteint)
-        pass
+        return self.attempts >= self.max_attempts or all(letter in self.guessed_letters for letter in self.word)
 
     def display_word(self):
-        # Afficher le mot avec les lettres devinées
-        pass
+        return ''.join(letter if letter in self.guessed_letters else '_' for letter in self.word)
 
     def display_hangman(self):
-        # Afficher l'image du pendu en fonction du nombre d'erreurs
-        pass
+        return f"assets/hangman_images/img-{self.attempts}.png"
+
 
 if __name__ == "__main__":
     word_to_guess = "pendu"
