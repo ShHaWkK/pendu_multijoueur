@@ -24,7 +24,7 @@ def main():
 
     try:
         while True:
-            # Recevoir le message du serveur etat du jeu 
+            # Recevoir le message du serveur etat du jeu
             server_response = client.receive()
             print(server_response)
 
