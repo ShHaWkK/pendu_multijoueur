@@ -21,7 +21,7 @@ class Client:
         try:
             while True:
                 # Receive the message from the server (game state, etc.)
-                server_response = self.receive()
+                server_response = self.receive()  # Vous devriez recevoir le message de bienvenue ici.
                 print(server_response)
 
                 # Check if the game is over
