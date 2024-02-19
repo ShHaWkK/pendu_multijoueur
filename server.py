@@ -6,6 +6,8 @@ from game_logic import Game
 
 class HangmanServer:
     def __init__(self, host, port, word, max_attempts):
+        self.host = host
+        self.port = port
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind((host, port))
         self.server.listen()
@@ -44,7 +46,7 @@ class HangmanServer:
         self.clients.remove(client)
 
     def start(self):
-        print(f"Serveur en attente sur {HOST}:{PORT}...")
+        print(f"Serveur en attente sur {self.host}:{self.port}...")
         while True:
             client, address = self.server.accept()
             print(f"Nouvelle connexion de {address}.")
