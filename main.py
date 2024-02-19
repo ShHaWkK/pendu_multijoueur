@@ -12,9 +12,8 @@ def start_game_server():
     server_thread.start()
 
 def start_game_client():
-    # Initialize and start a game client
     hangman_client = client.Client("127.0.0.1", 5555)
-    client_thread = threading.Thread(target=hangman_client.run_client)
+    client_thread = threading.Thread(target=hangman_client.start)  # Assuming you have a 'start' method
     client_thread.start()
     return client_thread
 
