@@ -19,6 +19,7 @@ class HangmanServer:
             client.send(message.encode())
 
     def handle_client(self, client):
+        client.send("Connexion au serveur de pendu réussie! Veuillez deviner une lettre:".encode())
         while True:
             try:
                 guess = client.recv(1024).decode()
