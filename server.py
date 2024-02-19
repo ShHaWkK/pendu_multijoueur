@@ -2,25 +2,61 @@
 
 import socket
 import threading
+from game_logic import Game
 
-def handle_client(client, address):
-    print(f"Nouvelle connexion de {address}.")
-    # Logique de gestion du client
+class HangmanServer:
+    def __init__(self, host, port, word, max_attempts):
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.bind((host, port))
+        self.server.listen()
+        self.clients = []
+        self.game = Game(word, max_attempts)
 
-def start_server():
-    host = "127.0.0.1"
-    port = 5555
+    def broadcast(self, message):
+        for client in self.clients:
+            client.send(message.encode())
 
-    server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server.bind((host, port))
-    server.listen()
+    def handle_client(self, client):
+        while True:
+            try:
+                guess = client.recv(1024).decode()
+                if guess:
+                    if self.game.guess(guess):
+                        message = "Bonne lettre!"
+                    else:
+                        message = "Mauvaise lettre."
 
-    print(f"Serveur en attente sur {host}:{port}...")
+                    if self.game.is_game_over():
+                        if all(letter in self.game.guessed_letters for letter in self.game.word):
+                            message = "Félicitations! Le mot était: " + self.game.word
+                        else:
+                            message = "Dommage! Le mot était: " + self.game.word
 
-    while True:
-        client, address = server.accept()
-        client_handler = threading.Thread(target=handle_client, args=(client, address))
-        client_handler.start()
+                        self.broadcast(message)
+                        break
+                    else:
+                        message += "\n" + self.game.display_word()
+                        self.broadcast(message)
+            except:
+                break
+
+        client.close()
+        self.clients.remove(client)
+
+    def start(self):
+        print(f"Serveur en attente sur {HOST}:{PORT}...")
+        while True:
+            client, address = self.server.accept()
+            print(f"Nouvelle connexion de {address}.")
+            self.clients.append(client)
+            client_handler = threading.Thread(target=self.handle_client, args=(client,))
+            client_handler.start()
 
 if __name__ == "__main__":
-    start_server()
+    HOST = "127.0.0.1"
+    PORT = 5555
+    WORD_TO_GUESS = "pendu"
+    MAX_ATTEMPTS = 6
+
+    hangman_server = HangmanServer(HOST, PORT, WORD_TO_GUESS, MAX_ATTEMPTS)
+    hangman_server.start()
